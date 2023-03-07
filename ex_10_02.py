@@ -1,24 +1,19 @@
-han = open("mbox-short.txt")
+"""Print the hour emails are seen at and the count of emails for that time.
 
-count = {}
-lst = []
+For example, for 3 emails sent at noon, print `12 3`.
 
-for line in han:
-    if line.startswith("From "):
-        num = line.split()[5]
-        hrs = num.split(':')
-        #print(hrs)
-        count[hrs[0]] = count.get(hrs[0],0) + 1
-    else:
-        continue
-    #print(count)
-        
-    #print(count)
+"""
+import collections
+import operator
 
-for k,v in count.items():                          
-    lst.append((k,v)) 
-    #print(k,v)                              
-    
-lst.sort()                                         
-for k,v in lst:                                   
-    print (k,v)                                    
+hours = []
+with open("mbox-short.txt") as file:
+    for line in file:
+        if line.startswith("From "):
+            first_colon = line.index(":")
+            hour = line[first_colon-2:first_colon]  # Assume 24-hour time.
+            hours.append(hour)
+
+hour_counts = collections.Counter(hours)
+for hour, count in sorted(hour_counts.items(), key=operator.itemgetter(0)):
+    print(hour, count)
